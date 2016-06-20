@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Generics in JAVA</title>
+
+    <meta name="description" content="Generics in JAVA">
+    <meta name="author" content="Thomas Feiner">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="bower_components/reveal.js/css/reveal.min.css">
+    <link rel="stylesheet" href="bower_components/reveal.js/css/theme/default.css" id="theme">
+    <link rel="stylesheet" href="css/additionalStyles.css">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="bower_components/reveal.js/lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+        if (window.location.search.match(/print-pdf/gi)) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'bower_components/reveal.js/css/print/pdf.css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="bower_components/reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+        <section>
+            <h1>Generics</h1>
+
+            <h3>in</h3>
+
+            <h2>JAVA</h2>
+
+            <p>
+                <small>Thomas Feiner</small>
+            </p>
+        </section>
+
+        <section>
+            <h3>Why Generics?</h3>
+            <br/>
+            <pre><code>
+    LinkedList list = new LinkedList();
+    list.add(new Integer(0));
+    Integer i = (Integer)list.get(0);
+    String s = (String)list.get(0); //not typesafe, fails at runtime
+            </code></pre>
+        </section>
+
+        <section>
+            <h3>Generic Collections</h3>
+            <br/>
+            <ul>
+                <li>Homogenous collections</li>
+                <li>Compile time checks (no casts necessary)</li>
+            </ul>
+            <br/><br/>
+
+           <pre><code>
+    LinkedList&lt;Integer&gt; list = new LinkedList&lt;&gt(); //diamond operator
+    list.add(new Integer(0));
+    Integer i = list.get(0);
+    String s = list.get(0); //compile time error
+           </code></pre>
+        </section>
+
+        <section>
+            <h3>Definition of Generic Type</h3>
+	<pre><code>
+    public class Pocket&lt;T&gt; {
+        private T value;
+
+        public void set(T value) {
+            this.value = value;
+        }
+
+        public T get() {
+            return value;
+        }
+
+        public boolean isEmpty() {
+            return value != null;
+        }
+    }
+    </code></pre>
+            <p>Formal type parameter represented by type variable T</p>
+        </section>
+
+        <section>
+            <h3>Usage of Generic Type</h3>
+	<pre><code>
+    public class MyClass {
+        public static void main (String[] args) {
+            Pocket&lt;String&gt; myPocket = new Pocket<>(); //diamond operator
+            myPocket.set("item1");
+            System.out.println(myPocket.get());
+            System.out.println(myPocket.isEmpty());
+        }
+    }
+    </code></pre>
+            <p>Concrete type argument "String". <br/>MyPocket&lt;String&gt; is a parameterized type.</p>
+        </section>
+
+        <section>
+            <h3>Limitations</h3>
+            <br/>
+            <ul>
+                <li>Similar to type, but not really a type <br/>
+                    (therefore define them in capital letters)
+                </li>
+                <li>Not allowed in "new"</li>
+                <li>Cannot be derived from</li>
+                <li>No class literal</li>
+                <li>No primitives</li>
+                <li>No Arrays of parameterized types <br/>(use @SafeVarargs for varargs)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Concepts</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Term</th>
+                    <th align="right">Example</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>generic type</td>
+                    <td align="right">Pocket&lt;T&gt;</td>
+                </tr>
+                <tr>
+                    <td>formal type parameter</td>
+                    <td align="right">T</td>
+                </tr>
+                <tr>
+                    <td>parameterized type</td>
+                    <td align="right">Pocket&lt;String&gt;</td>
+                </tr>
+                <tr>
+                    <td>actual type parameter</td>
+                    <td align="right">String</td>
+                </tr>
+                <tr>
+                    <td>raw type</td>
+                    <td align="right">Pocket</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h3>Nested generics</h3>
+            <br/>
+			<pre><code>
+    Pocket&lt;Pocket&lt;String&gt;&gt; pocketOfPockets = new Pocket&lt;&gt;();
+    pocketOfPockets.set( new Pocket&lt;String&gt;() );
+    pocketOfPockets.get().set( "Inner String Pocket" );
+    System.out.println( pocketOfPockets.get().get() ); // Inner String Pocket
+            </code></pre>
+        </section>
+
+        <section>
+            <h3>Diamond operator</h3>
+            <br/>
+			<pre><code>
+     List&lt;List&lt;String&gt;&gt; listOfLists = new ArrayList&lt;&gt;();
+            </code></pre>
+
+            <ul>
+                <li>for declaration and initialisation of attributes and local variables</li>
+                <br/>
+                <li>for initialisation of attributes, local variables and parameter variables</li>
+                <br/>
+                <li>as argument for method and constructor calls</li>
+                <br/>
+                <li>for method return values</li>
+                <br/>
+                <li>type inference is complex, use explicit type if diamond operator not possible</li>
+            </ul>
+
+        </section>
+
+        <section>
+            <h3>Generic interfaces</h3>
+            <br/>
+			
+			<pre><code>
+     public interface Comparable&lt;T&gt; {
+        public int compareTo(T o);
+     }
+            </code></pre>
+            <pre><code>
+     public interface Set&lt;E&gt; extends Collection&lt;E&gt; {
+        Iterator&lt;E&gt; iterator();
+
+        &lt;T&gt; T[] toArray(T[] a);
+
+        boolean add(E e);
+
+        ...
+     }
+            </code></pre>
+
+        </section>
+
+        <section>
+            <h3>Implementing Generic interfaces</h3>
+            <br/>
+
+            <p>non-generic class resolves Generics during implementation</p>
+            <pre><code>
+    public MyStringComparable implements Comparable&lt;String&gt;
+            </code></pre>
+
+            <p>generic class implementing generic interface</p>
+            <pre><code>
+    public MyComparable&lt;E&gt; implements Comparable&lt;String&gt;
+            </code></pre>
+
+            <p>hint: you can also use Void as type parameter</p>
+            <pre><code>
+    public MyComparable&lt;E&gt; implements Comparable&lt;Void&gt;
+            </code></pre>
+
+        </section>
+
+        <section>
+            <h3>Generic methods</h3>
+            <br/>
+
+            <p>Static methods cannot access the actual type parameter</p>
+            <p>Different methods cannot use different type variables</p>
+            <p>Solution: Generic Methods</p>
+            <pre><code>
+Modifier &lt;type variable(s)&gt; "return type" "method name" "parameters" "throws-clause"
+            </code></pre>
+             <pre><code>
+public static &lt;T&gt; void copy(List&lt;T&gt; dest, List&lt;T&gt; src)
+            </code></pre>
+        </section>
+
+        <section>
+            <h3>Type inference</h3>
+            <br/>
+            <pre><code>
+public static &lt;T&gt; T random(T first, T second);
+            </code></pre>
+            <ul>
+                <li>Return type is computed from context: type inference</li>
+                <br/>
+                <li>first and second do not need to be of same type</li>
+                <br/>
+                <li>In case of different types, compiler walks up the type hierarchy, until same type is found</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Type inference</h3>
+            <br/>
+            <table>
+                <thead>
+                <tr>
+                    <th>Call</th>
+                    <th align="middle">Identified types</th>
+                    <th align="right">Common types</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>random("test", 1)</td>
+                    <td align="middle">String, Integer</td>
+                    <td align="right">Object, Serializable, Comparable</td>
+                </tr>
+                <tr>
+                    <td>random(1L, 1D)</td>
+                    <td align="middle">Long, Double</td>
+                    <td align="right">Object, Number, Comparable</td>
+                </tr>
+                <tr>
+                    <td>random(new Point(), new StringBuilder()</td>
+                    <td align="middle">Point, StringBuilder</td>
+                    <td align="right">Object, Serialiable, Cloneable</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h3>Type inference</h3>
+            <br/>
+            <pre><code>
+    Object       s1 = random( "Essen", 1 );
+
+    Serializable s2 = random( "Essen", 1 );
+
+    Comparable   s3 = random( "Essen", 1 );
+            </code></pre>
+        </section>
+
+        <section>
+            <h3>Type inference</h3>
+            <br/>
+
+            <pre><code>
+List&lt;String[]&gt; myList = Arrays.&lt;String[]&gt;asList(new String[] { "A", "B" } );
+            </code></pre>
+            <p>Improved type inference in Java 8</p>
+        </section>
+
+        <section>
+            <h3>Type erasure</h3>
+            <br/>
+
+           <pre><code>
+    public class Pocket&lt;T&gt; {
+        private T value;
+        public void set( T value ) {
+            this.value = value;
+        }
+    }
+           </code></pre>
+
+           <pre><code>
+    public class Pocket {
+        private Object value;
+        public void set(Object value ) {
+            this.value = value;
+        }
+    }
+           </code></pre>
+        </section>
+
+        <section>
+            <h3>Type erasure</h3>
+            <br/>
+
+           <pre><code>
+    Pocket&lt;Integer&gt; p  = new Pocket&lt;Integer&gt;(1);
+    p.set(1);
+    Integer i = p.get();
+           </code></pre>
+
+           <pre><code>
+    Pocket p  = new Pocket( 1 );
+    p.set(1);
+    Integer i = (Integer) p.get();
+           </code></pre>
+        </section>
+
+        <section>
+            <h3>Type erasure - problems</h3>
+            <br/>
+            <ul>
+                <li>Type information not available during runtime</li>
+                <br/>
+                <li>no "new T"</li>
+                <br/>
+                <li>no "instanceof"</li>
+                <br/>
+                <li>no casts</li>
+                 <pre><code>
+List&lt;Number&gt; numbers = new ArrayList&lt;Integer&gt;())
+                 </code></pre>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Type erasure - problems</h3>
+            <br/>
+            <ul>
+                <li>no .class for generic types</li>
+                 <pre><code>
+     Class&lt;Pocket&lt;String&gt;&gt; pocketClass = Pocket&lt;String&gt;.class;
+                 </code></pre>
+                <li>no generic exceptions</li>
+                <br/>
+                <li>static methods cannot access the actual type parameter(s)</li>
+                <br/>
+                <li>no overloading</li>
+                <br/>
+                <li>no Arrays of generic classes</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Raw types</h3>
+            <br/>
+            <ul>
+                <li>Due to compatibility reasons you can use the raw type</li>
+                <pre><code>
+     List myList = new ArrayList();
+                </code></pre>
+                <br/>
+                <li>Do NOT use raw types in new code. If this is needed, something is pretty wrong!</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Restrict types - extends</h3>
+            <br/>
+            <pre><code>
+    public static &lt;T extends Comparable&lt;T&gt;&gt; T max( T first, T second )
+            </code></pre>
+            <br/>
+            <p>The common type of first and second has to be "Comparable"</p>
+            <br/>
+            <pre><code>
+    max( 12L, 100F ) );  // Bound mismatch compiler error
+            </code></pre>
+            </ul>
+            <br/>
+            <p>Recursive type bound</p>
+        </section>
+
+        <section>
+            <h3>Generics and inheritance</h3>
+            <br/>
+            <ul>
+                <li>Arrays are covariant</li>
+                <li>Generics are invariant&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                <pre><code>
+HashSet&lt;Object&gt; mySet = new HashSet&lt;String&gt;();
+                </code></pre>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Wildcards with ?</h3>
+            <br/>
+            <p>If type does not matter (read-only access), use ? wildcard</p>
+            <pre><code>
+    public static boolean isOnePocketEmpty(Pocket&lt;?&gt;... pockets)
+            </code></pre>
+            <p>read only, you cannot write!</p>
+            <pre><code>
+    List&lt;?> myIntegerList = new ArrayList&lt;Integer&gt;();
+    Object firstNumber = myIntegerList.get(0);
+    myIntegerList.add(23); // compiler error
+            </code></pre>
+        </section>
+
+        <section>
+            <h3>Wildcards</h3>
+            <br/>
+            <table>
+                <thead>
+                <tr>
+                    <th>Example</th>
+                    <th align="right">Meaning</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>List&lt;?&gt; myList</td>
+                    <td align="right">List with arbitrary elements</td>
+                </tr>
+                <tr>
+                    <td>List&lt;? extends Number&gt; myList</td>
+                    <td align="right">List with numbers or descendants</td>
+                </tr>
+                <tr>
+                    <td>Comparator&lt;? super String&gt; </td>
+                    <td align="right">String-, Object- or CharSequence Comparator</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h3>PECS principle</h3>
+            <br/>
+            <p>Producer extends, Consumer Super</p>
+            <p>LESS: lesen extends, schreiben super</p>
+            <pre><code>
+public class PecsExample {
+    public static void main(String[] args) {
+        List&lt;Integer&gt; src = Arrays.asList(1, 2, 3, 4);
+        List&lt;Number&gt; dest = new ArrayList&lt;&gt;();
+
+        copyList2(src, dest);
+        dest.stream().forEach(element -&gt; System.out.println(element.intValue()));
+    }
+
+    private static void copyList1(List&lt;? extends Number&gt; src, List&lt;? extends Number&gt; dest) {
+        for (Number element : src) {
+            dest.add(element); // compile error
+        }
+    }
+
+    private static void copyList2(List&lt;? extends Number&gt; src, List&lt;? super Number&gt; dest) {
+        // src.add(3); // compile error, extends can only be read
+        for (Number element : src) {
+            dest.add(element);
+        }
+        // Object firstElement = dest.get(0); // super can only be written (returns just Object)
+    }
+}
+        </code></pre>
+        </section>
+
+        <section>
+            <h1>Thank you for your attention!</h1>
+        </section>
+    </div>
+
+</div>
+
+
+<script src="bower_components/reveal.js/lib/js/head.min.js"></script>
+<script src="bower_components/reveal.js/js/reveal.min.js"></script>
+
+<script>
+
+    // Fulull list of configuration options available here:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Parallax scrolling
+        // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+        // parallaxBackgroundSize: '2100px 900px',
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+            {
+                src: 'bower_components/reveal.js/lib/js/classList.js', condition: function () {
+                return !document.body.classList;
+            }
+            },
+            {
+                src: 'bower_components/reveal.js/plugin/markdown/marked.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            }
+            },
+            {
+                src: 'bower_components/reveal.js/plugin/markdown/markdown.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            }
+            },
+            {
+                src: 'bower_components/reveal.js/plugin/highlight/highlight.js', async: true, callback: function () {
+                hljs.initHighlightingOnLoad();
+            }
+            },
+            {
+                src: 'bower_components/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function () {
+                return !!document.body.classList;
+            }
+            },
+            {
+                src: 'bower_components/reveal.js/plugin/notes/notes.js', async: true, condition: function () {
+                return !!document.body.classList;
+            }
+            }
+        ]
+    });
+
+</script>
+
+</body>
+</html>
